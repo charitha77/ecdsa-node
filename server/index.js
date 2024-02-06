@@ -25,7 +25,7 @@ app.post("/send", (req, res) => {
   const { signatureObj, messageHex, sender, recipient, amount } = req.body;
 
   //convert signature back to BigInt values
-  for (key in signatureObj) {
+  for (const key in signatureObj) {
     if (typeof signatureObj[key] === "string") {
       signatureObj[key] = BigInt(signatureObj[key]);
     }
@@ -35,10 +35,9 @@ app.post("/send", (req, res) => {
 
   //Recover public key from signature
   const signature = new secp256k1.Signature(r, s, recovery);
-  const publicKey = toHex(signature.recoverPublicKey(messageHex).toRawBytes());
 
   //check if it corressponds to the sender's address
-  const isValid = secp256k1.verify(signature, messageHex, publicKey);
+  const isValid = secp256k1.verify(signature, messageHex, sender);
   if (isValid) {
     setInitialBalance(sender);
     setInitialBalance(recipient);
